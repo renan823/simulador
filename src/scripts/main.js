@@ -47,6 +47,21 @@ class Rocket {
     #getViscosity() {
         return createVector(this.vel.x * VISCOSITY, this.vel.y * VISCOSITY);
     }
+
+    #getResultantForce() {
+        return createVector(this.#getThrust().x - this.#getViscosity().x, this.#getThrust().y - this.#getWeight().y - this.#getViscosity().y);
+    }
+
+    #getAcceleration() {
+        const force = this.#getResultantForce();
+        return createVector(force.x / this.mass, force.y / this.mass);
+    }
+
+    update(dt) {
+        this.acc = this.#getAcceleration();
+        this.vel.add(p5.Vector.mult(this.acc, dt));
+        this.pos.add(p5.Vector.mult(this.vel, dt));
+    }
 }
 
 //-----------------------------------------------------
@@ -65,4 +80,3 @@ function draw() {
     //desenha o foguete na tela 
     rect(r.pos.x, r.pos.y, r.width, r.height);
 }
-   
