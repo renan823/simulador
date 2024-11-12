@@ -1,5 +1,7 @@
-GRAVITY = 9.81
+GRAVITY = 9.81 #m/s^2
 VISCOSITY = 0.1
+FUEL_DENSITY = 0.2
+FUEL_EJECTION = 3000 #m/s
 
 colors = {
     "white": (255, 255, 255),
