@@ -1,4 +1,10 @@
 # Projeto de Física - Simulador
+<p align="center">
+  <img src="assets/diagrama.png" alt="Diagrama representando o modelo físico">
+  <br>
+  <em>Figura 1: Esquema</em>
+</p>
+
 
 ### Foguete
 O foguete contém os seguintes atributos:
