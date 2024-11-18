@@ -26,4 +26,4 @@ O motor contém os seguintes atributos:
 
 O motor gera empuxo com base em seu peso e na velocidade gerada pela queima do combustível.
 
-A classes de motor que podem ser utilizadas herdam de "RocketEngine" apenas as funções, alterando sesu atributos (massa e taxa de queima).
+A classes de motor que podem ser utilizadas herdam de "RocketEngine" apenas as funções, alterando seus atributos (massa e taxa de queima).
