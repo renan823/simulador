@@ -35,6 +35,7 @@ No menu, o jogar pode escolher o tipo de motor que vai usar
 '''
 CARD_WIDTH, CARD_HEIGHT = 250, 350
 
+
 def menu():
     # Tela inicial
     screen.fill(colors["black"]) 
@@ -103,33 +104,42 @@ def game():
     pygame.draw.rect(screen, colors["white"], (rocket.pos[0], rocket.pos[1], rocket.width, rocket.height))
     pygame.display.flip()
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
 
-        if event.type == pygame.KEYDOWN:
-            if SCREEN == MENU:
-                # Escolhe o tipo do motor (1, 2 ou 3)
-                if event.key == pygame.K_1:
-                    engine = engines.EngineModel1(INITIAL_FUEL)
-                if event.key == pygame.K_2:
-                    engine = engines.EngineModel2(INITIAL_FUEL)
-                if event.key == pygame.K_3:
-                    engine = engines.EngineModel3(INITIAL_FUEL)  
+def main() -> None:
 
-    # Mudança de tela
-    if engine != None:
-        rocket = Rocket(WIDTH // 2 - 10, HEIGHT - 150, 0, engine)
-        SCREEN = GAME
+    global engine, SCREEN
 
-    if SCREEN == MENU:
-        menu()
-    
-    elif SCREEN == GAME:
-        # Controla a mudança de tela
-        if engine != None and rocket != None:
-            game()
-        else:
-            SCREEN = MENU
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                if SCREEN == MENU:
+                    # Escolhe o tipo do motor (1, 2 ou 3)
+                    if event.key == pygame.K_1:
+                        engine = engines.EngineModel1(INITIAL_FUEL)
+                    if event.key == pygame.K_2:
+                        engine = engines.EngineModel2(INITIAL_FUEL)
+                    if event.key == pygame.K_3:
+                        engine = engines.EngineModel3(INITIAL_FUEL)  
+
+        # Mudança de tela
+        if engine != None:
+            rocket = Rocket(WIDTH // 2 - 10, HEIGHT - 150, 0, engine)
+            SCREEN = GAME
+
+        if SCREEN == MENU:
+            menu()
+        
+        elif SCREEN == GAME:
+            # Controla a mudança de tela
+            if engine != None and rocket != None:
+                game()
+            else:
+                SCREEN = MENU
+
+
+if __name__ == '__main__':
+    main()
