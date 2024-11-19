@@ -4,28 +4,28 @@ import numpy as np
 import math
 
 class RocketEngine:
-    def __init__(self, burn_rate, mass, fuel, name):
-        self.burn_rate = burn_rate
-        self.mass = mass
-        self.fuel = fuel
-        self.active = False
-        self.name = name
+    def __init__(self, burn_rate: float, mass: float, fuel: float, name: str) -> None:
+        self.burn_rate: float= burn_rate
+        self.mass: float = mass
+        self.fuel: float = fuel
+        self.active: bool = False
+        self.name: str = name
 
-    def activate(self):
+    def activate(self) -> None:
         self.active = True
 
-    def deactivate(self):
+    def deactivate(self) -> None:
         self.active = False
 
-    def _get_total_mass(self):
+    def _get_total_mass(self) -> float:
         return self.mass + (self.fuel * FUEL_DENSITY)
 
-    def _get_weight(self, angle):
+    def _get_weight(self, angle: int) -> float:
         total = self._get_total_mass()
 
         return np.array([math.cos(angle), math.sin(angle)]) * total * GRAVITY
 
-    def get_thrust(self, yaw):
+    def get_thrust(self, yaw: int) -> float:
         angle = deg_to_rad(yaw)
 
         weight = self._get_weight(angle) 
@@ -40,7 +40,7 @@ class RocketEngine:
 
 
 class EngineModel1(RocketEngine):
-    def __init__(self, fuel):
+    def __init__(self, fuel: float):
         super().__init__(0.5, 200, fuel, ENGINE_NAMES[0])
 
 class EngineModel2(RocketEngine):

@@ -126,6 +126,7 @@ while True:
 
     if SCREEN == MENU:
         menu()
+    
     elif SCREEN == GAME:
         # Controla a mudança de tela
         if engine != None and rocket != None:
