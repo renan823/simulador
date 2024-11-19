@@ -5,6 +5,7 @@ from settings import colors, ENGINE_NAMES, INITIAL_FUEL
 from rocket import Rocket
 import engines
 
+# ------------------------------------- Global Variables and pygame init -------------------------------------
 pygame.init()
 
 WIDTH, HEIGHT = 1000, 800
@@ -35,6 +36,7 @@ No menu, o jogar pode escolher o tipo de motor que vai usar
 '''
 CARD_WIDTH, CARD_HEIGHT = 250, 350
 
+# -------------------------------------------- Functions --------------------------------------------
 
 def menu():
     # Tela inicial
@@ -73,7 +75,8 @@ def menu():
 
 
     pygame.display.flip()
-    
+
+
 def game():
     # Tela do jogo
     screen.fill(colors["lightblue"])  
