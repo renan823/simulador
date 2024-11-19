@@ -78,6 +78,9 @@ def menu():
 
 
 def game():
+
+    global rocket
+
     # Tela do jogo
     screen.fill(colors["lightblue"])  
 
@@ -110,7 +113,7 @@ def game():
 
 def main() -> None:
 
-    global engine, SCREEN
+    global engine, rocket, SCREEN
 
     while True:
         for event in pygame.event.get():
