@@ -5,12 +5,12 @@ import numpy as np
 import math
 
 class Rocket:
-    def __init__(self, x: int, y: int, yaw: int, engine: RocketEngine) -> None:
+    def __init__(self, x: float, y: float, yaw: int, engine: RocketEngine) -> None:
         self.width: int = 20
         self.height: int = 100
-        self.pos = np.array([x, y])
-        self.vel = np.array([0, 0])
-        self.acc = np.array([0, 0])
+        self.pos = np.array([float(x), float(y)])
+        self.vel = np.array([0.0, 0.0])
+        self.acc = np.array([0.0, 0.0])
         self.mass = 500
         self.engine = engine
         self.yaw = yaw

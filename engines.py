@@ -28,10 +28,7 @@ class RocketEngine:
     def get_thrust(self, yaw: int) -> float:
         angle = deg_to_rad(yaw)
 
-        weight = self._get_weight(angle) 
-
-        if self.fuel < self.burn_rate:
-            return weight
+        weight = self._get_weight(angle)
 
         velocity = np.array([math.cos(angle), math.sin(angle)]) * FUEL_EJECTION * self.burn_rate
         self.fuel -= self.burn_rate

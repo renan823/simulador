@@ -29,18 +29,18 @@ Eles sõ serão criados após o menu inicial.
 engine = None
 rocket = None
 
-
 '''
 Definição da tela MENU
 No menu, o jogar pode escolher o tipo de motor que vai usar
 '''
 CARD_WIDTH, CARD_HEIGHT = 250, 350
 
+
 # -------------------------------------------- Functions --------------------------------------------
 
 def menu():
     # Tela inicial
-    screen.fill(colors["black"]) 
+    screen.fill(colors["black"])
 
     # Titulo
     title = fonts["title"].render("Rocket Simulator", True, colors["white"])
@@ -67,22 +67,20 @@ def menu():
         screen.blit(card_text, (text_x, text_y))
 
         # Escreve a tecla pra pressinoar
-        instruction = fonts["message"].render(f"Press {i+1}", True, colors["white"])
+        instruction = fonts["message"].render(f"Press {i + 1}", True, colors["white"])
         text_x = x + (CARD_WIDTH - instruction.get_width()) // 2
         text_y = y + (CARD_HEIGHT - instruction.get_height()) - 20
 
         screen.blit(instruction, (text_x, text_y))
 
-
     pygame.display.flip()
 
 
 def game():
-
     global rocket
 
     # Tela do jogo
-    screen.fill(colors["lightblue"])  
+    screen.fill(colors["lightblue"])
 
     # Escreve informações na tela
     positions = fonts["message"].render(f"X: {rocket.pos[0]}  Y: {rocket.pos[1]}", True, colors["black"])
@@ -103,18 +101,18 @@ def game():
 
     # Escreve a porcentagem de combustivel 
     fuel_amount = fonts["message"].render(f"{rocket.engine.fuel / INITIAL_FUEL * 100 : .1f}%", True, colors["black"])
-    text_x = WIDTH - 35 - (fuel_amount.get_width() // 2) + 5 
+    text_x = WIDTH - 35 - (fuel_amount.get_width() // 2) + 5
     screen.blit(fuel_amount, (WIDTH - 60, HEIGHT - 20))
 
     # Desenha o foguete
-    pygame.draw.rect(screen, colors["white"], (rocket.pos[0], rocket.pos[1], rocket.width, rocket.height))
+    pygame.draw.rect(screen, colors["white"], (rocket.pos[1], rocket.pos[0], rocket.width, rocket.height))
     pygame.display.flip()
 
 
 def main() -> None:
-
     global engine, rocket, SCREEN
 
+    dt = 0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -129,20 +127,23 @@ def main() -> None:
                     if event.key == pygame.K_2:
                         engine = engines.EngineModel2(INITIAL_FUEL)
                     if event.key == pygame.K_3:
-                        engine = engines.EngineModel3(INITIAL_FUEL)  
+                        engine = engines.EngineModel3(INITIAL_FUEL)
 
-        # Mudança de tela
+                        # Mudança de tela
         if engine != None:
-            rocket = Rocket(WIDTH // 2 - 10, HEIGHT - 150, 0, engine)
+            rocket = Rocket(HEIGHT - 150, WIDTH // 2 - 10, 0, engine)
             SCREEN = GAME
 
         if SCREEN == MENU:
             menu()
-        
+
         elif SCREEN == GAME:
             # Controla a mudança de tela
             if engine != None and rocket != None:
+                rocket.update(dt)
                 game()
+                pygame.time.delay(1000);
+                dt += 1
             else:
                 SCREEN = MENU
 
