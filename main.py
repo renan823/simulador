@@ -1,10 +1,10 @@
-from turtledemo.penrose import start
-
 import pygame
 import sys
+import numpy as np
 
 from settings import colors, ENGINE_NAMES, INITIAL_FUEL
 from rocket import Rocket
+from particle import Particle, ExplosionParticle
 import engines
 
 # ------------------------------------- Global Variables and pygame init -------------------------------------
@@ -26,14 +26,21 @@ fonts = {
 
 '''
 Inicialização dos objetos rocket e engine.
-Eles sõ serão criados após o menu inicial.
+Eles só serão criados após o menu inicial.
 '''
 engine = None
 rocket = None
 
 '''
+Inicialização das partículas
+'''
+particles = [] 
+explosion = []
+exploded = False
+
+'''
 Definição da tela MENU
-No menu, o jogar pode escolher o tipo de motor que vai usar
+No menu, o jogador pode escolher o tipo de motor que vai usar
 '''
 CARD_WIDTH, CARD_HEIGHT = 250, 350
 
@@ -68,7 +75,7 @@ def menu():
 
         screen.blit(card_text, (text_x, text_y))
 
-        # Escreve a tecla pra pressinoar
+        # Escreve a tecla para pressionar
         instruction = fonts["message"].render(f"Press {i + 1}", True, colors["white"])
         text_x = x + (CARD_WIDTH - instruction.get_width()) // 2
         text_y = y + (CARD_HEIGHT - instruction.get_height()) - 20
@@ -79,7 +86,10 @@ def menu():
 
 
 def game():
-    global rocket
+    global rocket, particles, explosion, exploded
+
+    # Calcula o offset da câmera
+    camera_offset_y = rocket.pos[0] - (HEIGHT // 2 - rocket.height // 2)
 
     # Tela do jogo
     screen.fill(colors["lightblue"])
@@ -92,46 +102,82 @@ def game():
     positions = fonts["message"].render(f"{rocket.engine.name} engine", True, colors["black"])
     screen.blit(positions, (20, 40))
 
-    # Desenha o tanque de combustivel
+    # Desenha o chão (só se estiver na câmera)
+    ground_height = 50
+    pygame.draw.rect(screen, colors["brown"], (0, HEIGHT - ground_height - camera_offset_y, WIDTH, ground_height + 300))
+
+    # Desenha o tanque de combustível
     pygame.draw.rect(screen, colors["gray"], (WIDTH - 40, HEIGHT - 480, 20, 450))
 
-    # Desenha a barra de combustivel (proporcional)
+    # Desenha a barra de combustível (proporcional)
     bar_height = 440
     fuel_bar_height = int(bar_height * rocket.engine.fuel / INITIAL_FUEL)
     bar_y = HEIGHT - 475 + (bar_height - fuel_bar_height)
     pygame.draw.rect(screen, colors["green"], (WIDTH - 35, bar_y, 10, fuel_bar_height))
 
-    # Escreve a porcentagem de combustivel
+    # Escreve a porcentagem de combustível
     fuel_amount = fonts["message"].render(f"{rocket.engine.fuel / INITIAL_FUEL * 100 : .1f}%", True, colors["black"])
     text_x = WIDTH - 35 - (fuel_amount.get_width() // 2) + 5
     screen.blit(fuel_amount, (WIDTH - 60, HEIGHT - 20))
 
-    # Desenha o chão
-    pygame.draw.rect(screen, colors["brown"], (0, HEIGHT - 50, WIDTH - 80, 100))
+    # Desenha o foguete (se ele não bateu)
+    if not rocket.crashed:
+        pygame.draw.rect(screen, colors["white"], (rocket.pos[1], rocket.pos[0] - camera_offset_y, rocket.width, rocket.height))
 
-    # Desenha o foguete
-    pygame.draw.rect(screen, colors["white"], (rocket.pos[1], rocket.pos[0], rocket.width, rocket.height))
-    pygame.display.flip()
+    # Cria partículas
+    if rocket.launched and rocket.engine.fuel > 0:
+        for _ in range(5):
+            particles.append(Particle(rocket.pos[1] + rocket.width // 2, rocket.pos[0] - camera_offset_y + rocket.height))
 
-    if rocket.pos[0] > HEIGHT - 150:
-        message = fonts["message"].render("Foguete atingiu o destino!", True, colors["black"])
+    # Desenha partículas
+    for particle in particles:
+        particle.move()
+        pygame.draw.circle(screen, particle.color, (int(particle.x), int(particle.y)), particle.size)
+
+        if particle.lifetime <= 0:
+            particles.remove(particle)
+
+    if rocket.crashed and not exploded:
+        # Inicia a explosão
+        exploded = True
+        for _ in range(30):  # Criar mais partículas de explosão
+            explosion.append(ExplosionParticle(WIDTH // 2 - 10, HEIGHT - ground_height - camera_offset_y))
+
+    # Desenha explosão
+    for particle in explosion:
+        particle.move()
+
+        # Ajusta a opacidade e desenha
+        particle_color = (particle.color[0], particle.color[1], particle.color[2], particle.alpha)
+        pygame.draw.circle(screen, particle_color, (int(particle.x), int(particle.y)), particle.size)
+
+        if not particle.is_alive():
+            explosion.remove(particle)
+    
+    # Verifica se o foguete atingiu o chão
+    if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground_height):
+        # Ajusta a posição de parada
+        rocket.landed = True
+        rocket.pos = np.array([float(HEIGHT - 150), float(WIDTH // 2 - 10)])
+
+        if abs(rocket.vel[0]) > 10:  # Velocidade muito alta não pode pousar!
+            message = fonts["subtitle"].render("Você explodiu!", True, colors["red"])
+            rocket.crashed = True
+        else:
+            message = fonts["subtitle"].render("Pouso bem-sucedido!", True, colors["green"])
+        
         screen.blit(message, (WIDTH // 2 - message.get_width() // 2, HEIGHT // 2 - message.get_height() // 2))
+        
 
-        # Atualiza a tela para exibir a mensagem
-        pygame.display.flip()
-
-        # Aguarda alguns segundos antes de encerrar
-        pygame.time.wait(3000)
-        pygame.quit()
-        sys.exit()
-
-
+    pygame.display.flip()
 
 def main() -> None:
     global engine, rocket, SCREEN
 
     clock = pygame.time.Clock()  # Cria um relógio para controlar o FPS
-    start_time = pygame.time.get_ticks()  # Marca o tempo inicial
+    start_time = None  # Marca o tempo inicial
+    dt = None
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -148,22 +194,29 @@ def main() -> None:
                     if event.key == pygame.K_3:
                         engine = engines.EngineModel3(INITIAL_FUEL)
 
-                        # Mudança de tela
-        if engine != None:
+                if SCREEN == GAME and event.key == pygame.K_SPACE:
+                    if rocket is not None and not rocket.launched:
+                        rocket.launch()  # Inicia o foguete
+                        start_time = pygame.time.get_ticks()  # Marca o tempo de início
+
+        # Mudança de tela
+        if engine is not None and rocket is None:
             rocket = Rocket(HEIGHT - 150, WIDTH // 2 - 10, 0, engine)
             SCREEN = GAME
 
         # Calcula o delta time (tempo decorrido desde o último quadro)
         current_time = pygame.time.get_ticks()
-        dt = (current_time - start_time) / 1000.0  # Em segundos
+
+        if rocket and rocket.launched:
+            dt = (current_time - start_time) / 1000.0  # Em segundos
 
         if SCREEN == MENU:
             menu()
-
         elif SCREEN == GAME:
             # Controla a mudança de tela
-            if engine != None and rocket != None:
-                rocket.update(dt)
+            if engine is not None and rocket is not None:
+                if rocket.launched:
+                    rocket.update()
                 game()
             else:
                 SCREEN = MENU

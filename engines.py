@@ -60,4 +60,4 @@ class EngineModel2(RocketEngine):
 
 class EngineModel3(RocketEngine):
     def __init__(self, fuel):
-        super().__init__(3.1, 250, fuel, ENGINE_NAMES[2], 1741)
+        super().__init__(3.1, 250, fuel, ENGINE_NAMES[2], 7689)

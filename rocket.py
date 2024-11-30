@@ -13,16 +13,15 @@ class Rocket:
         self.acc = np.array([0.0, 0.0])
         self.mass = 50  # Massa do foguete sem combustível
         self.engine = engine
+        self.launched = False
+        self.landed = False
+        self.crashed = False
         self.yaw = yaw
 
-    def get_thrust(self, yaw: int) -> np.ndarray:
-        if self.fuel <= 0:
-            return np.array([0.0, 0.0])
-
-        angle = deg_to_rad(yaw)
-        thrust = np.array([math.cos(angle), math.sin(angle)]) * self.fuel_ejection * self.burn_rate * (self.fuel / 900)
-        self.fuel = max(0, self.fuel - self.burn_rate)
-        return thrust
+    def launch(self):
+        if not self.launched:
+            self.launched = True
+            self.update()
 
     def _get_weight(self) -> np.ndarray:
         angle = deg_to_rad(self.yaw)
@@ -44,10 +43,8 @@ class Rocket:
         acceleration = force / total_mass
         return acceleration
 
-    def update(self, dt: float) -> None:
-        self.acc = self._get_acceleration()
-        print(self.vel)
-        self.vel += self.acc * dt
-        print(self.vel)
-        self.pos += self.vel * dt
-
+    def update(self) -> None:
+        if self.launched and not self.landed:
+            self.acc = self._get_acceleration()
+            self.vel += self.acc 
+            self.pos += self.vel 
