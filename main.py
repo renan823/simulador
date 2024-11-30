@@ -1,3 +1,5 @@
+from turtledemo.penrose import start
+
 import pygame
 import sys
 
@@ -83,7 +85,7 @@ def game():
     screen.fill(colors["lightblue"])
 
     # Escreve informações na tela
-    positions = fonts["message"].render(f"X: {round(rocket.pos[1], 2)}  Y: {round(rocket.pos[0], 2)}", True, colors["black"])
+    positions = fonts["message"].render(f"X: {round(rocket.pos[1] - 490, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True, colors["black"])
     screen.blit(positions, (20, 20))
 
     # Escreve nome do motor
@@ -104,9 +106,25 @@ def game():
     text_x = WIDTH - 35 - (fuel_amount.get_width() // 2) + 5
     screen.blit(fuel_amount, (WIDTH - 60, HEIGHT - 20))
 
+    # Desenha o chão
+    pygame.draw.rect(screen, colors["brown"], (0, HEIGHT - 50, WIDTH - 80, 100))
+
     # Desenha o foguete
     pygame.draw.rect(screen, colors["white"], (rocket.pos[1], rocket.pos[0], rocket.width, rocket.height))
     pygame.display.flip()
+
+    if rocket.pos[0] > HEIGHT - 150:
+        message = fonts["message"].render("Foguete atingiu o destino!", True, colors["black"])
+        screen.blit(message, (WIDTH // 2 - message.get_width() // 2, HEIGHT // 2 - message.get_height() // 2))
+
+        # Atualiza a tela para exibir a mensagem
+        pygame.display.flip()
+
+        # Aguarda alguns segundos antes de encerrar
+        pygame.time.wait(3000)
+        pygame.quit()
+        sys.exit()
+
 
 
 def main() -> None:
@@ -145,7 +163,6 @@ def main() -> None:
         elif SCREEN == GAME:
             # Controla a mudança de tela
             if engine != None and rocket != None:
-                print(dt)
                 rocket.update(dt)
                 game()
             else:
