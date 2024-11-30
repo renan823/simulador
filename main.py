@@ -83,7 +83,7 @@ def game():
     screen.fill(colors["lightblue"])
 
     # Escreve informações na tela
-    positions = fonts["message"].render(f"X: {rocket.pos[0]}  Y: {rocket.pos[1]}", True, colors["black"])
+    positions = fonts["message"].render(f"X: {round(rocket.pos[1], 2)}  Y: {round(rocket.pos[0], 2)}", True, colors["black"])
     screen.blit(positions, (20, 20))
 
     # Escreve nome do motor
@@ -99,7 +99,7 @@ def game():
     bar_y = HEIGHT - 475 + (bar_height - fuel_bar_height)
     pygame.draw.rect(screen, colors["green"], (WIDTH - 35, bar_y, 10, fuel_bar_height))
 
-    # Escreve a porcentagem de combustivel 
+    # Escreve a porcentagem de combustivel
     fuel_amount = fonts["message"].render(f"{rocket.engine.fuel / INITIAL_FUEL * 100 : .1f}%", True, colors["black"])
     text_x = WIDTH - 35 - (fuel_amount.get_width() // 2) + 5
     screen.blit(fuel_amount, (WIDTH - 60, HEIGHT - 20))
@@ -112,7 +112,8 @@ def game():
 def main() -> None:
     global engine, rocket, SCREEN
 
-    dt = 0
+    clock = pygame.time.Clock()  # Cria um relógio para controlar o FPS
+    start_time = pygame.time.get_ticks()  # Marca o tempo inicial
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -134,19 +135,23 @@ def main() -> None:
             rocket = Rocket(HEIGHT - 150, WIDTH // 2 - 10, 0, engine)
             SCREEN = GAME
 
+        # Calcula o delta time (tempo decorrido desde o último quadro)
+        current_time = pygame.time.get_ticks()
+        dt = (current_time - start_time) / 1000.0  # Em segundos
+
         if SCREEN == MENU:
             menu()
 
         elif SCREEN == GAME:
             # Controla a mudança de tela
             if engine != None and rocket != None:
+                print(dt)
                 rocket.update(dt)
                 game()
-                pygame.time.delay(1000);
-                dt += 1
             else:
                 SCREEN = MENU
 
+        clock.tick(60)
 
 if __name__ == '__main__':
     main()
