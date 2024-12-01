@@ -32,10 +32,12 @@ class Rocket:
         else:
             self.engine.activate()
 
+    def _get_mass(self):
+        return self.mass + (self.engine.fuel * FUEL_DENSITY)
+
     def _get_weight(self) -> np.ndarray:
         angle = deg_to_rad(self.yaw)
-        total_mass = self.mass + (self.engine.fuel * FUEL_DENSITY)
-        return np.array([math.cos(angle), math.sin(angle)]) * total_mass * GRAVITY
+        return np.array([math.cos(angle), math.sin(angle)]) * self._get_mass() * GRAVITY
 
     def _get_viscosity(self) -> np.ndarray:
         # Calcula a viscosidade conforme a resistencia do ar
@@ -43,7 +45,7 @@ class Rocket:
 
     def _get_terminal_velocity(self) -> float:
         # Calcula a velocidade terminal do foguete
-        return terminal_velocity(self.mass, self.width, self.height, self.pos[1])
+        return terminal_velocity(self._get_mass(), self.width, self.height, self.pos[1])
 
     # Função gerada por IA
     def _get_drag(self) -> np.ndarray:
@@ -94,19 +96,30 @@ class Rocket:
         acceleration = force / total_mass
         return acceleration
 
-    def update(self) -> None:
-        if self.crashed:
-            self.engine.deactivate()
+    def check_landing(self):
+        # Ajusta condições do pouso
+        self.landed = True
+        self.pos = self.initial_pos
 
+        # Usa a vel terminal para verificar pouso
+        tvel = self._get_terminal_velocity()
+
+        if abs(self.vel[0]) > tvel:
+            self.crashed = True
+            return False
+        
+        return True
+
+    def update(self) -> None:
         if self.launched and not self.landed:
             self.acc = self._get_acceleration()
-            self.vel += self.acc  # Atualiza a velocidade com a aceleração
-            self.pos += self.vel  # Atualiza a posição com a velocidade
+            self.vel += self.acc  # Atualizando a velocidade com a aceleração
+            self.pos += self.vel  # Atualizando a posição com a velocidade
 
-            # Verificar se atingiu a velocidade terminal 
-            mag = np.linalg.norm(self.vel)
-            tv = self._get_terminal_velocity()
+            # Calculando a velocidade terminal
+            tvel = self._get_terminal_velocity()
 
-            if mag > tv:
-                # Limitar a velocidade 
-                self.vel = (self.vel / mag) * tv
+            # Limitar a velocidade máxima a uma margem da velocidade terminal
+            if np.linalg.norm(self.vel) > tvel:
+                direction = self.vel / np.linalg.norm(self.vel)  # Normaliza a direção da velocidade
+                self.vel = direction * tvel  # Limita a velocidade

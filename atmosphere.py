@@ -1,4 +1,6 @@
 import numpy as np
+import math
+from settings import GRAVITY, R, T0, P0, L_tropo, T_tropo
 
 '''
 Essas funções foram geradas usando inteligência artificial e adaptadas
@@ -28,38 +30,31 @@ def air_density(altitude):
     Returns:
         float: Densidade do ar em kg/m³.
     """
-    # Constantes
-    R = 287.05  # Constante específica do ar seco (J/(kg·K))
-    g = 9.80665  # Gravidade (m/s²)
-    P0 = 101325  # Pressão ao nível do mar (Pa)
-    T0 = 288.15  # Temperatura ao nível do mar (K)
-    L_tropo = 0.0065  # Gradiente térmico na troposfera (K/m)
-    T_tropo = 216.65  # Temperatura constante na estratosfera inferior (K)
 
     # Troposfera: 0 a 11 km
     if altitude <= 11000:
         T = T0 - L_tropo * altitude
-        P = P0 * (1 - (L_tropo * altitude) / T0) ** (g / (R * L_tropo))
+        P = P0 * (1 - (L_tropo * altitude) / T0) ** (GRAVITY / (R * L_tropo))
 
     # Estratosfera inferior: 11 a 20 km (temperatura constante)
     elif 11000 < altitude <= 20000:
         T = T_tropo
         P11 = P0 * (1 - (L_tropo * 11000) / T0) ** (g / (R * L_tropo))
-        P = P11 * math.exp(-g * (altitude - 11000) / (R * T))
+        P = P11 * math.exp(-GRAVITY * (altitude - 11000) / (R * T))
 
     # Estratosfera superior: 20 a 47 km (temperatura aumenta linearmente)
     elif 20000 < altitude <= 47000:
         L_strato = 0.001  # Gradiente térmico na estratosfera superior (K/m)
         T = T_tropo + L_strato * (altitude - 20000)
-        P20 = P11 * math.exp(-g * (20000 - 11000) / (R * T_tropo))
+        P20 = P11 * math.exp(-GRAVITY * (20000 - 11000) / (R * T_tropo))
         P = P20 * (1 + L_strato * (altitude - 20000) / T_tropo) ** (-g / (R * L_strato))
 
     # Mesosfera inferior: 47 a 86 km (temperatura decresce linearmente)
     elif 47000 < altitude <= 86000:
         L_meso = -0.00299  # Gradiente térmico na mesosfera (K/m)
         T = 282.65 + L_meso * (altitude - 47000)
-        P47 = P20 * (1 + L_strato * (47000 - 20000) / T_tropo) ** (-g / (R * L_strato))
-        P = P47 * (1 + L_meso * (altitude - 47000) / 282.65) ** (-g / (R * L_meso))
+        P47 = P20 * (1 + L_strato * (47000 - 20000) / T_tropo) ** (-GRAVITY / (R * L_strato))
+        P = P47 * (1 + L_meso * (altitude - 47000) / 282.65) ** (-GRAVITY / (R * L_meso))
 
     # Termosfera: acima de 86 km (densidade aproximada)
     elif altitude > 86000:
@@ -126,7 +121,6 @@ def terminal_velocity(mass, width, height, altitude):
     Returns:
         float: Velocidade terminal escalar.
     """
-    g = 9.80665  # Aceleração gravitacional (m/s²)
     A = width * height  # Área frontal do foguete (m²)
     
     # Obter densidade do ar (ρ)
@@ -138,6 +132,5 @@ def terminal_velocity(mass, width, height, altitude):
     if rho <= 0 or Cd <= 0:
         raise ValueError("Parâmetros inválidos para densidade ou coeficiente de arrasto.")
     
-    # Fórmula da velocidade terminal escalar
-    vt = (2 * mass * g / (Cd * rho * A)) ** 0.5
-    return vt
+    # Fórmula da velocidade terminal
+    return math.sqrt((2 * mass * GRAVITY) / (Cd * rho * A))

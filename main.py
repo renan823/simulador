@@ -156,15 +156,11 @@ def game():
     
     # Verifica se o foguete atingiu o chão
     if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground_height):
-        # Ajusta a posição de parada
-        rocket.landed = True
-        rocket.pos = np.array([float(HEIGHT - 150), float(WIDTH // 2 - 10)])
-
-        if abs(rocket.vel[0]) > 10:  # Velocidade muito alta não pode pousar!
-            message = fonts["subtitle"].render("Você explodiu!", True, colors["red"])
-            rocket.crashed = True
-        else:
+        if rocket.check_landing():  
             message = fonts["subtitle"].render("Pouso bem-sucedido!", True, colors["green"])
+        else:
+            # Velocidade muito alta não pode pousar!
+            message = fonts["subtitle"].render("Você explodiu!", True, colors["red"])
         
         screen.blit(message, (WIDTH // 2 - message.get_width() // 2, HEIGHT // 2 - message.get_height() // 2))
         
