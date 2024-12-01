@@ -31,7 +31,7 @@ class RocketEngine:
         O empuxo diminui continuamente conforme o combustível vai sendo consumido.
         """
         # Se não houver mais combustível, não há empuxo
-        if self.fuel <= 0:
+        if self.fuel <= 0 or not self.active:
             return np.array([0.0, 0.0])
 
         # Calculando o ângulo de direção do motor

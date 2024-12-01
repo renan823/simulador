@@ -1,5 +1,4 @@
 GRAVITY = 9.81 #m/s^2
-VISCOSITY = 1
 FUEL_DENSITY = 0.2
 FUEL_EJECTION_MOTOR_1 = 9810  # Para Motor 1
 FUEL_EJECTION_MOTOR_2 = 5450  # Para Motor 2
@@ -23,3 +22,4 @@ colors = {
     "dark-orange": (194,65,12),
     "amber": (245,158,11),
 }
+

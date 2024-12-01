@@ -125,7 +125,7 @@ def game():
         pygame.draw.rect(screen, colors["white"], (rocket.pos[1], rocket.pos[0] - camera_offset_y, rocket.width, rocket.height))
 
     # Cria partículas
-    if rocket.launched and rocket.engine.fuel > 0:
+    if rocket.launched and rocket.engine.fuel > 0 and rocket.engine.active:
         for _ in range(5):
             particles.append(Particle(rocket.pos[1] + rocket.width // 2, rocket.pos[0] - camera_offset_y + rocket.height))
 
@@ -195,9 +195,13 @@ def main() -> None:
                         engine = engines.EngineModel3(INITIAL_FUEL)
 
                 if SCREEN == GAME and event.key == pygame.K_SPACE:
-                    if rocket is not None and not rocket.launched:
-                        rocket.launch()  # Inicia o foguete
-                        start_time = pygame.time.get_ticks()  # Marca o tempo de início
+                    if rocket is not None:
+                        if rocket.launched:
+                            # Permite ligar/desligar o motor uma vez que ele foi iniciado
+                            rocket.swap_active()
+                        else:
+                            rocket.launch()  # Inicia o foguete
+                            start_time = pygame.time.get_ticks()  # Marca o tempo de início
 
         # Mudança de tela
         if engine is not None and rocket is None:
