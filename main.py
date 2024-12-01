@@ -155,6 +155,7 @@ def game():
             explosion.remove(particle)
     
     # Verifica se o foguete atingiu o chão
+    # FALTA AJUSTAR ISSO AQUI (DO JEITO Q TÁ ELE NUNCA VAI EXPLODIR)
     if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground_height):
         if rocket.check_landing():  
             message = fonts["subtitle"].render("Pouso bem-sucedido!", True, colors["green"])

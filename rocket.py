@@ -110,6 +110,7 @@ class Rocket:
         
         return True
 
+    # FALTA AJUSTAR A VELOCIDADE TERMINAL!!!!!
     def update(self) -> None:
         if self.launched and not self.landed:
             self.acc = self._get_acceleration()
