@@ -111,6 +111,14 @@ def menu():
 
     pygame.display.flip()
 
+def reset_game():
+    """Reinicia as variáveis globais para o estado inicial."""
+    global engine, rocket, particles, explosion, exploded
+    engine = None
+    rocket = None
+    particles = []
+    explosion = []
+    exploded = False
 
 def game():
     global rocket, particles, explosion, exploded
@@ -200,14 +208,19 @@ def game():
     # Verifica se o foguete atingiu o chão
     # FALTA AJUSTAR ISSO AQUI (DO JEITO Q TÁ ELE NUNCA VAI EXPLODIR)
     if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground_height):
-        if rocket.check_landing():  
-            message = fonts["subtitle"].render("Pouso bem-sucedido!", True, colors["green"])
+        if rocket.check_landing():
+            message = fonts["subtitle"].render("Pouso bem-sucedido! Aperte ESPAÇO para voltar ao menu", True, colors["green"])
         else:
             # Velocidade muito alta não pode pousar!
-            message = fonts["subtitle"].render("Você explodiu!", True, colors["red"])
-        
+            message = fonts["subtitle"].render("Você explodiu! Aperte ESPAÇO para voltar ao menu", True, colors["red"])
+
         screen.blit(message, (WIDTH // 2 - message.get_width() // 2, HEIGHT // 2 - message.get_height() // 2))
-        
+
+        # Verifica se a tecla SPACE foi pressionada para voltar ao menu
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            reset_game()
+            SCREEN = MENU
 
     pygame.display.flip()
 
