@@ -104,7 +104,9 @@ class Rocket:
         # Usa a vel terminal para verificar pouso
         tvel = self._get_terminal_velocity()
 
-        if abs(self.vel[0]) > tvel:
+        print(self.vel, self.acc)
+
+        if abs(self.acc[0]) > 5:
             self.crashed = True
             return False
         

@@ -1,6 +1,7 @@
 import pygame
 import sys
 import numpy as np
+import time
 
 from settings import colors, ENGINE_NAMES, INITIAL_FUEL
 from rocket import Rocket
@@ -176,7 +177,7 @@ def game():
         screen.blit(rocket_image, (rocket.pos[1], rocket.pos[0] - camera_offset_y))
 
     # Cria partículas
-    if rocket.launched and rocket.engine.fuel > 0 and rocket.engine.active:
+    if rocket.launched and rocket.engine.fuel > 0 and rocket.engine.active and not rocket.crashed:
         for _ in range(5):
             particles.append(Particle(rocket.pos[1] + rocket.width // 2, rocket.pos[0] - camera_offset_y + rocket.height))
 
@@ -207,7 +208,7 @@ def game():
     
     # Verifica se o foguete atingiu o chão
     # FALTA AJUSTAR ISSO AQUI (DO JEITO Q TÁ ELE NUNCA VAI EXPLODIR)
-    if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground_height):
+    if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground_height) and not rocket.landed:
         if rocket.check_landing():
             message = fonts["subtitle"].render("Pouso bem-sucedido! Aperte ESPAÇO para voltar ao menu", True, colors["green"])
         else:
@@ -229,7 +230,6 @@ def main() -> None:
 
     clock = pygame.time.Clock()  # Cria um relógio para controlar o FPS
     start_time = None  # Marca o tempo inicial
-    dt = None
 
     while True:
         for event in pygame.event.get():
@@ -256,6 +256,9 @@ def main() -> None:
                             rocket.launch()  # Inicia o foguete
                             start_time = pygame.time.get_ticks()  # Marca o tempo de início
 
+                        if rocket.landed and not rocket.crashed:
+                            rocket.landed = False
+
         # Mudança de tela
         if engine is not None and rocket is None:
             ground_height = 50
@@ -263,11 +266,6 @@ def main() -> None:
             initial_x = (WIDTH - 126) // 2
             rocket = Rocket(initial_y, initial_x, 0, engine)
             SCREEN = GAME
-        # Calcula o delta time (tempo decorrido desde o último quadro)
-        current_time = pygame.time.get_ticks()
-
-        if rocket and rocket.launched:
-            dt = (current_time - start_time) / 1000.0  # Em segundos
 
         if SCREEN == MENU:
             menu()
