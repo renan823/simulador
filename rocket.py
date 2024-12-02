@@ -7,8 +7,8 @@ import math
 
 class Rocket:
     def __init__(self, x: float, y: float, yaw: int, engine: RocketEngine) -> None:
-        self.width: int = 20
-        self.height: int = 100
+        self.width: int = 126
+        self.height: int = 126
         self.initial_pos = np.array([float(x), float(y)])
         self.pos = np.array([float(x), float(y)])
         self.vel = np.array([0.0, 0.0])

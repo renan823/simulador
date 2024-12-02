@@ -44,7 +44,11 @@ No menu, o jogador pode escolher o tipo de motor que vai usar
 '''
 CARD_WIDTH, CARD_HEIGHT = 250, 350
 
-
+'''
+Carregando imagem do foguete
+'''
+rocket_image = pygame.image.load("./assets/rocket.png")
+rocket_image = pygame.transform.scale(rocket_image, (126, 126))
 # -------------------------------------------- Functions --------------------------------------------
 
 def menu():
@@ -122,7 +126,7 @@ def game():
 
     # Desenha o foguete (se ele não bateu)
     if not rocket.crashed:
-        pygame.draw.rect(screen, colors["white"], (rocket.pos[1], rocket.pos[0] - camera_offset_y, rocket.width, rocket.height))
+        screen.blit(rocket_image, (rocket.pos[1], rocket.pos[0] - camera_offset_y))
 
     # Cria partículas
     if rocket.launched and rocket.engine.fuel > 0 and rocket.engine.active:
@@ -202,9 +206,11 @@ def main() -> None:
 
         # Mudança de tela
         if engine is not None and rocket is None:
-            rocket = Rocket(HEIGHT - 150, WIDTH // 2 - 10, 0, engine)
+            ground_height = 50
+            initial_y = HEIGHT - ground_height - 126
+            initial_x = (WIDTH - 126) // 2
+            rocket = Rocket(initial_y, initial_x, 0, engine)
             SCREEN = GAME
-
         # Calcula o delta time (tempo decorrido desde o último quadro)
         current_time = pygame.time.get_ticks()
 
