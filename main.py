@@ -50,6 +50,29 @@ Carregando imagem do foguete
 rocket_image = pygame.image.load("./assets/rocket.png")
 rocket_image = pygame.transform.scale(rocket_image, (126, 126))
 # -------------------------------------------- Functions --------------------------------------------
+def interpolate_color(color1, color2, factor):
+    return (
+        int(color1[0] + (color2[0] - color1[0]) * factor),
+        int(color1[1] + (color2[1] - color1[1]) * factor),
+        int(color1[2] + (color2[2] - color1[2]) * factor)
+    )
+
+def get_background(altitude):
+    if altitude <= 11000:  # Troposfera
+        return colors["lightblue"]
+    elif 11000 < altitude <= 20000:  # Estratosfera inferior
+        factor = (altitude - 11000) / (20000 - 11000)
+        return interpolate_color(colors["lightblue"], colors["darkblue1"], factor)
+    elif 20000 < altitude <= 47000:  # Estratosfera superior
+        factor = (altitude - 20000) / (47000 - 20000)
+        return interpolate_color(colors["darkblue1"], colors["darkblue2"], factor)
+    elif 47000 < altitude <= 86000:  # Mesosfera inferior
+        factor = (altitude - 47000) / (86000 - 47000)
+        return interpolate_color(colors["darkblue2"], colors["darkblue3"], factor)
+    else:  # Termosfera
+        factor = min((altitude - 86000) / 10000, 1)
+        return interpolate_color(colors["darkblue3"], colors["darkblue4"], factor)
+
 
 def menu():
     # Tela inicial
@@ -96,15 +119,31 @@ def game():
     camera_offset_y = rocket.pos[0] - (HEIGHT // 2 - rocket.height // 2)
 
     # Tela do jogo
-    screen.fill(colors["lightblue"])
+    altitude = HEIGHT - rocket.pos[0]
+    background = get_background(altitude)
+    screen.fill(background)
 
     # Escreve informações na tela
-    positions = fonts["message"].render(f"X: {round(rocket.pos[1] - 490, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True, colors["black"])
+    if altitude <= 86000:
+        positions = fonts["message"].render(f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True, colors["black"])
+        vel = fonts["message"].render(f"Vel: {round(rocket.vel[0], 4) * -1}", True, colors["black"])
+        acc = fonts["message"].render(f"Acc: {round(rocket.acc[0], 4) * -1}", True, colors["black"])
+    else:
+        positions = fonts["message"].render(f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True,colors["white"])
+        vel = fonts["message"].render(f"Vel: {round(rocket.vel[0], 4) * -1}", True, colors["white"])
+        acc = fonts["message"].render(f"Acc: {round(rocket.acc[0], 4) * -1}", True, colors["white"])
+
     screen.blit(positions, (20, 20))
+    screen.blit(vel, (20, 40))
+    screen.blit(acc, (20, 60))
 
     # Escreve nome do motor
-    positions = fonts["message"].render(f"{rocket.engine.name} engine", True, colors["black"])
-    screen.blit(positions, (20, 40))
+    if altitude <= 86000:
+        positions = fonts["message"].render(f"{rocket.engine.name} engine", True, colors["black"])
+
+    else:
+        positions = fonts["message"].render(f"{rocket.engine.name} engine", True, colors["white"])
+    screen.blit(positions, (20, 80))
 
     # Desenha o chão (só se estiver na câmera)
     ground_height = 50
