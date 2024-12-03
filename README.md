@@ -45,7 +45,20 @@ Para finalizar o diagrama, o vetor $\vec{r}(t)$ é o vetor posição do foguete.
 
 Agora, aprofundando na física do simulador. Nós primeiramente calculamos cada uma das forças e então calculamos a força resultante de todas elas. Em seguida, aplicamos a 2ª Lei de Newton: $$\vec{F} = m \cdot \vec{a},$$ para encontrarmos a aceleração do corpo. Então, nós integramos para achar o valor da velocidade e repetimos o processo para achar o valor da posição. Com esse valor em mão, atualizamos a posição do foguete.
 ## Sobre a simulação
-Como dito anteriormente, o projeto trata-se de uma simulação de um foguete em condições semelhantes às encontradas por um foguete real. Nós consideramos 3 tipos de motores, que o usuário pode escolher livremente para simular. Além disso, consideramos 5 camadas para a atmosfera:
+Como dito anteriormente, o projeto trata-se de uma simulação de um foguete em condições semelhantes às encontradas por um foguete real. O cõdigo foi desenvolvido em Python e utilizamos as seguintes bibliotecas:
+- certifi
+- charset-normalizer
+- docopt
+- idna
+- mpmath
+- numpy
+- pygame
+- requests
+- sympy
+- urllib3
+- yarg 
+
+Nós consideramos 3 tipos de motores, que o usuário pode escolher livremente para simular. Além disso, consideramos 5 camadas para a atmosfera:
 - Troposfera
 - Estratosfera inferior
 - Estratosfera superior
