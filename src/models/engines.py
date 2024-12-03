@@ -1,8 +1,15 @@
+"""
+Arquivo que criamos a classe do motor do foguete e suas funções
+"""
+
+# Importando bibliotecas
 import numpy as np
 import math
-
 from src.utils.constants import GRAVITY, FUEL_DENSITY, ENGINE_NAMES
 
+"""
+Criando a classe do motor do foguete
+"""
 class RocketEngine:
     def __init__(self, burn_rate: float, mass: float, fuel: float, name: str, fuel_ejection: float) -> None:
         self.burn_rate = burn_rate  # Taxa de queima de combustível
@@ -12,23 +19,31 @@ class RocketEngine:
         self.name = name  # Nome do motor
         self.fuel_ejection = fuel_ejection  # Velocidade de ejeção de combustível (empuxo máximo por unidade de combustível)
 
+    """
+    Função que ativa o motor
+    """
     def activate(self) -> None:
-        """Ativa o motor"""
         self.active = True
 
+    """
+    Função que desativa o motor
+    """
     def deactivate(self) -> None:
-        """Desativa o motor"""
         self.active = False
 
+    """
+    Função que calcula a massa total do foguete (motor + combustível restante)
+     
+    - return: massa total do foguete
+    """
     def _get_total_mass(self) -> float:
-        """Retorna a massa total do foguete (motor + combustível restante)"""
         return self.mass + (self.fuel * FUEL_DENSITY)
 
+    """
+    Função que calcula o empuxo baseado no combustível restante e taxa de queima dele. O empuxo diminue continuamente conforme 
+    o combustível vai sendo consumido
+    """
     def get_thrust(self, yaw: int) -> np.ndarray:
-        """
-        Calcula o empuxo baseado no combustível restante e taxa de queima.
-        O empuxo diminui continuamente conforme o combustível vai sendo consumido.
-        """
         # Se não houver mais combustível, não há empuxo
         if self.fuel <= 0 or not self.active:
             return np.array([0.0, 0.0])
@@ -45,14 +60,23 @@ class RocketEngine:
 
         return thrust
 
+"""
+Cria classe do motor 1
+"""
 class EngineModel1(RocketEngine):
     def __init__(self, fuel):
         super().__init__(0.5, 200, fuel, ENGINE_NAMES[0], 10791)
 
+"""
+Cria classe do motor 2
+"""
 class EngineModel2(RocketEngine):
     def __init__(self, fuel):
         super().__init__(0.9, 215, fuel, ENGINE_NAMES[1], 5995)
 
+"""
+Cria classe do motor 3
+"""
 class EngineModel3(RocketEngine):
     def __init__(self, fuel):
         super().__init__(3.1, 250, fuel, ENGINE_NAMES[2], 7689)

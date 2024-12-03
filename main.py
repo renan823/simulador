@@ -1,3 +1,15 @@
+""""
+Simulador de Foguetes
+
+Projeto da Disciplina de Física Básica
+
+Autores:
+- Augusto Fernandes Ildefonso
+- Renan Trofino
+- Renan Calusa
+"""
+
+# Importanto bibliotecas
 import pygame
 import sys
 import numpy as np
@@ -37,7 +49,9 @@ particles = []
 explosion = []
 
 # -------------------------------------------- Telas --------------------------------------------
-
+"""
+Função principal do programa
+"""
 def main() -> None:
     global engine, rocket, ground, particles, explosion, screen, SCREEN
 

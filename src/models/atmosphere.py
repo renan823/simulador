@@ -1,6 +1,10 @@
+"""
+Arquivo com as funções relacionadas à atmosfera, cada um dos seus níveis, densidades, etc
+"""
+
+# Importando bibliotecas
 import numpy as np
 import math
-
 from src.utils.constants import GRAVITY, R, T0, P0, L_tropo, T_tropo
 
 '''
@@ -21,17 +25,13 @@ Usando o chatGPT, os prompts foram:
     - e como lidar com valores maiores que a troposfera? Realize o ajuste para valores maiores tbm
 '''
 
+"""
+Função que calcula a densidade do ar para cada uma das altitudes, até 86 km
+
+- altitude: altitude do foguete em metros
+- return: densidade do ar
+"""
 def air_density(altitude):
-    """
-    Calcula a densidade do ar para altitudes de até 86 km.
-
-    Args:
-        altitude (float): Altitude em metros (m).
-
-    Returns:
-        float: Densidade do ar em kg/m³.
-    """
-
     # Troposfera: 0 a 11 km
     if altitude <= 11000:
         T = T0 - L_tropo * altitude
@@ -73,56 +73,46 @@ def air_density(altitude):
 
     return density
 
+"""
+Função que estima o coeficiente de arrasto (C_d) para um foguete, consideramos um modelo retangular para facilitar os cálculos
+
+- width: largura do foguete
+- height: altura do foguete
+- return: coeficiente de arrasto estimado
+"""
 def drag_coefficient(width, height):
-    """
-    Estima o coeficiente de arrasto (C_d) para um foguete retangular.
-    Args:
-        width (float): Largura do foguete em metros.
-        height (float): Altura do foguete em metros.
-    
-    Returns:
-        float: Coeficiente de arrasto estimado.
-    """
     base_cd = 1.2  # C_d base para formas retangulares básicas.
     aspect_ratio = width / height
     additional_cd = 0.5 * aspect_ratio
     return base_cd + additional_cd
 
+"""
+Função que calcula a força de resistência do ar para um foguete em função da altitude
 
+- altitude: altitude do foguete
+- velocity: velocidade do foguete
+- width: largura do foguete
+- height: altura do foguete
+- return: força de arrasto do foguete
+"""
 def air_resistance(altitude, velocity, width, height):
-    """
-    Calcula a força de resistência do ar para um foguete em função da altitude.
-    
-    Args:
-        altitude (float): Altitude do foguete em metros.
-        velocity (float): Velocidade do foguete em m/s.
-        width (float): Largura do foguete em metros.
-        height (float): Altura do foguete em metros.
-    
-    Returns:
-        float: Força de arrasto em Newtons (N).
-    """
     density = air_density(altitude)
     drag_coefficient = drag_coefficient(width, height)
     frontal_area = width * height
     drag_force = 0.5 * density * velocity**2 * drag_coefficient * frontal_area
     return drag_force
 
+"""
+Função que calcula a velocidade terminal como vetor
 
+- mass: massa do foguete
+- width: largura do foguete
+- height: altura do foguete
+- altitude: altitude do foguete
+- return: velocidade terminal do foguete
+"""
 def terminal_velocity(mass, width, height, altitude):
-    """
-    Calcula a velocidade terminal como vetor.
-
-    Args:
-        mass (float): Massa do foguete (kg).
-        width (float): Largura do foguete (m).
-        height (float): Altura do foguete (m).
-        altitude (float): Altitude atual do foguete (m).
-
-    Returns:
-        float: Velocidade terminal escalar.
-    """
-    A = width * height /1000 # Área frontal do foguete (m²)
+    A = width * height /200 # Área frontal do foguete (m²)
     
     # Obter densidade do ar (ρ)
     rho = air_density(altitude)

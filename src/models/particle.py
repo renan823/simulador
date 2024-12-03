@@ -1,6 +1,14 @@
+"""
+Arquivo que cria as partículas do foguete
+"""
+
+# Importando bibliotecas
 import random
 from src.utils.misc import colors
 
+"""
+Criando a classe das partículas
+"""
 class Particle:
     def __init__(self, x, y):
         self.x = x
@@ -16,7 +24,10 @@ class Particle:
         self.y += self.speed_y
         self.lifetime -= 1
 
+"""
+Criando a classe da explosão
 
+"""
 class ExplosionParticle:
     def __init__(self, x, y):
         self.x = x

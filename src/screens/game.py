@@ -1,11 +1,21 @@
-import pygame
+"""
+Arquivo com as funções relativas ao jogo, desde sua interface gráfica ao seu funcionamento
+"""
 
+# Importanto bibliotecas
+import pygame
 from src.utils.misc import fonts, colors
 from src.utils.constants import WIDTH, HEIGHT, INITIAL_FUEL
 from src.models.surface import Surface
 from src.models.particle import Particle, ExplosionParticle
 
+"""
+Função que cria o degradê do plano de fundo, de acordo com um fator que muda para cada altura
 
+- color1: cor 1
+- color2: cor 2
+- factor: valor númerico relativo à altura, usado para calcular as transições do degradê
+"""
 def interpolate_color(color1, color2, factor):
     return (
         int(color1[0] + (color2[0] - color1[0]) * factor),
@@ -13,7 +23,11 @@ def interpolate_color(color1, color2, factor):
         int(color1[2] + (color2[2] - color1[2]) * factor)
     )
 
+"""
+Função que define o plano de fundo para cada altura/altitude
 
+- altitude: altitude que o foguete está
+"""
 def get_background(altitude):
     if altitude <= 11000:  # Troposfera
         return colors["lightblue"]
@@ -30,12 +44,21 @@ def get_background(altitude):
         factor = min((altitude - 86000) / 10000, 1)
         return interpolate_color(colors["darkblue3"], colors["darkblue4"], factor)
 
-
+# Importando imagem do foguete
 rocket_image = pygame.image.load("./assets/rocket.png")
 rocket_image = pygame.transform.scale(rocket_image, (126, 126))
 exploded = False
 
+"""
+Função que cria o jogo, tanto os gráficos quanto as funcionalidades
 
+- engine: motor usado
+- rocket: classe foguete
+- ground: variável do chão
+- particle: variável das partículas
+- explosion: variável das explosões
+- screen: variável da tela atual
+"""
 def game(engine, rocket, ground, particles, explosion, screen):
     global exploded
 
@@ -119,8 +142,7 @@ def game(engine, rocket, ground, particles, explosion, screen):
         if not particle.is_alive():
             explosion.remove(particle)
 
-    # Verifica se o foguete atingiu o chão
-    # FALTA AJUSTAR ISSO AQUI (DO JEITO Q TÁ ELE NUNCA VAI EXPLODIR)
+    # Verifica se o foguete atingiu o chão para explodir
     if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground.height) and not rocket.landed:
         if rocket.check_landing():
             message = fonts["subtitle"].render("Pouso bem-sucedido!", True, colors["green"])

@@ -1,10 +1,19 @@
-import pygame
+"""
+Definição do menu e das suas funções principais
+"""
 
+# Importando bibliotecas
+import pygame
 from src.utils.misc import fonts, colors
 from src.utils.constants import ENGINE_NAMES, WIDTH, HEIGHT
 
 CARD_WIDTH, CARD_HEIGHT = 250, 350
 
+"""
+Função que cria a tela de Menu
+
+- screen: variável da tela atual do simulador
+"""
 def menu(screen):
     # Tela inicial
     screen.fill(colors["black"])

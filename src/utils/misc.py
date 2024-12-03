@@ -1,3 +1,6 @@
+"""
+Configurações e constantes do estilo do jogo, como cores e fontes
+"""
 import pygame
 
 pygame.init()

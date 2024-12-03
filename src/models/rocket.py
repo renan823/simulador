@@ -1,10 +1,17 @@
+"""
+Arquivo que cria a classe do foguete e suas funções
+"""
+
+# Importando bibliotecas
 import numpy as np
 import math
-
 from src.utils.constants import GRAVITY, FUEL_DENSITY
 from src.models.engines import RocketEngine
 from src.models.atmosphere import air_density, terminal_velocity
 
+"""
+Criando a classe do foguete
+"""
 class Rocket:
     def __init__(self, x: float, y: float, yaw: int, engine: RocketEngine) -> None:
         self.width: int = 126
@@ -22,33 +29,54 @@ class Rocket:
         self.yaw = yaw
         self.angular_velocity = 5
 
+    """
+    Função que seta o foguete como lançado
+    """
     def launch(self):
         if not self.launched:
             self.engine.active = True
             self.launched = True
             self.update()
 
+    """
+    Função que ativa/desativa o motor
+    """
     def swap_active(self):
         if self.engine.active:
             self.engine.deactivate()
         else:
             self.engine.activate()
 
+    """
+    Função que calcula a massa do foguete
+    """
     def _get_mass(self):
         return self.mass + (self.engine.fuel * FUEL_DENSITY)
 
+    """
+    Função que calcula a força gravitacional que age no foguete
+    """
     def _get_weight(self) -> np.ndarray:
         angle = math.radians(self.yaw)  # Usando math.radians em vez de deg_to_rad
         return np.array([math.cos(angle), math.sin(angle)]) * self._get_mass() * GRAVITY
 
+    """
+    Função que calcula a força viscosa que age no foguete
+    """
     def _get_viscosity(self) -> np.ndarray:
         # Calcula a viscosidade conforme a resistencia do ar
         return -self.vel * air_density(self.pos[1] - self.initial_pos[1])
 
+    """
+    Função que calcula a velocidade terminal
+    """
     def _get_terminal_velocity(self) -> float:
         # Calcula a velocidade terminal do foguete
         return terminal_velocity(self._get_mass(), self.width, self.height, self.pos[1])
 
+    """
+    Função que calcula a força de arrasto
+    """
     def _get_drag(self) -> np.ndarray:
         # Calcula a força de arrasto baseada na velocidade e altitude
         velocity_magnitude = np.linalg.norm(self.vel)  # Magnitude da velocidade
@@ -85,18 +113,27 @@ class Rocket:
 
         return drag_vector
 
+    """
+    Função que calcula a força resultante
+    """
     def _get_resultant_force(self) -> np.ndarray:
         thrust = self.engine.get_thrust(self.yaw)
         weight = self._get_weight()
         drag = self._get_drag()
         return - thrust + weight + drag
 
+    """
+    Função que calcula a aceleração
+    """
     def _get_acceleration(self) -> np.ndarray:
         force = self._get_resultant_force()
         total_mass = self._get_mass()
         acceleration = force / total_mass
         return np.array([math.cos(math.radians(self.yaw)), math.sin(math.radians(self.yaw))]) * acceleration
 
+    """
+    Função que verifica se o foguete pousou
+    """
     def check_landing(self):
         # Ajusta condições do pouso
         self.landed = True
@@ -111,6 +148,9 @@ class Rocket:
 
         return True
 
+    """
+    Função que atualiza o foguete
+    """
     def update(self) -> None:
         if self.launched and not self.landed:
             self.acc = self._get_acceleration()

@@ -1,3 +1,6 @@
+"""
+Constantes usadas nos cálculos e no funcionamento do foguete, motor e do pygame
+"""
 FUEL_DENSITY = 0.2
 FUEL_EJECTION_MOTOR_1 = 9810  # Para Motor 1
 FUEL_EJECTION_MOTOR_2 = 5450  # Para Motor 2
