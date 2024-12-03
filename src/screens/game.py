@@ -120,7 +120,8 @@ def game(engine, rocket, ground, particles, explosion, screen):
     # FALTA AJUSTAR ISSO AQUI (DO JEITO Q TÁ ELE NUNCA VAI EXPLODIR)
     if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground.height) and not rocket.landed:
         if rocket.check_landing():
-            message = fonts["subtitle"].render("Pouso bem-sucedido!", True, colors["green"])
+            while True:
+                message = fonts["subtitle"].render("Pouso bem-sucedido!", True, colors["green"])
         else:
             # Velocidade muito alta não pode pousar!
             message = fonts["subtitle"].render("Você explodiu!", True, colors["red"])
