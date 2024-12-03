@@ -2,7 +2,7 @@ import random
 from src.utils.misc import colors
 
 class Particle:
-    def __init__(self, x, y):
+    def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
         self.size = random.randint(2, 6)

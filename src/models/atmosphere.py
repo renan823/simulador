@@ -109,7 +109,7 @@ def air_resistance(altitude, velocity, width, height):
     return drag_force
 
 
-def terminal_velocity(mass, width, height, altitude):
+def terminal_velocity(mass, width, height, altitude) -> float:
     """
     Calcula a velocidade terminal como vetor.
 

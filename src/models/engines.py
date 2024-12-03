@@ -11,7 +11,7 @@ class RocketEngine:
         self.active = False  # Motor inativo por padrão
         self.name = name  # Nome do motor
         self.fuel_ejection = fuel_ejection  # Velocidade de ejeção de combustível (empuxo máximo por unidade de combustível)
-        self.thrust_level = thrust_level
+        self.thrust_level = thrust_level # Quanto menor, maior a aceleração
 
     def activate(self) -> None:
         """Ativa o motor"""
@@ -36,7 +36,7 @@ class RocketEngine:
 
         # Empuxo gerado é a combinação da velocidade de ejeção e a taxa de queima
         # A força é proporcional à quantidade de combustível restante
-        thrust = np.array([0, 1]) * self.fuel_ejection * self.burn_rate * (self.fuel / self.thrust_level)  # ajuste no thrust_level para controlar o empuxo
+        thrust = np.array([1, 0]) * self.fuel_ejection * self.burn_rate * (self.fuel / self.thrust_level)  # ajuste no thrust_level para controlar o empuxo
 
         # Reduzindo o combustível com base na taxa de queima, respeitando que não pode ficar negativo
         self.fuel = max(0, self.fuel - self.burn_rate)
@@ -45,12 +45,12 @@ class RocketEngine:
 
 class EngineModel1(RocketEngine):
     def __init__(self, fuel):
-        super().__init__(0.5, 200, fuel, ENGINE_NAMES[0], 10791, 1000)
+        super().__init__(0.5, 200, fuel, ENGINE_NAMES[0], 10791, 100)
 
 class EngineModel2(RocketEngine):
     def __init__(self, fuel):
-        super().__init__(0.9, 215, fuel, ENGINE_NAMES[1], 5995, 1000)
+        super().__init__(0.9, 215, fuel, ENGINE_NAMES[1], 5995, 100)
 
 class EngineModel3(RocketEngine):
     def __init__(self, fuel):
-        super().__init__(3.1, 250, fuel, ENGINE_NAMES[2], 7689, 1000)
+        super().__init__(3.1, 250, fuel, ENGINE_NAMES[2], 7689, 100)

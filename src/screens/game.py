@@ -47,12 +47,12 @@ def game(engine, rocket, ground, particles, explosion, screen):
     # Escreve informações na tela
     if altitude <= 86000:
         positions = fonts["message"].render(f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True, colors["black"])
-        vel = fonts["message"].render(f"Vel: {round(rocket.vel[0], 4) * -1}", True, colors["black"])
-        acc = fonts["message"].render(f"Acc: {round(rocket.acc[0], 4) * -1}", True, colors["black"])
+        vel = fonts["message"].render(f"Vel: {round(rocket.vel[0], 4)}", True, colors["black"])
+        acc = fonts["message"].render(f"Acc: {round(rocket.acc[0], 4)}", True, colors["black"])
     else:
         positions = fonts["message"].render(f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True,colors["white"])
-        vel = fonts["message"].render(f"Vel: {round(rocket.vel[0], 4) * -1}", True, colors["white"])
-        acc = fonts["message"].render(f"Acc: {round(rocket.acc[0], 4) * -1}", True, colors["white"])
+        vel = fonts["message"].render(f"Vel: {round(rocket.vel[0], 4)}", True, colors["white"])
+        acc = fonts["message"].render(f"Acc: {round(rocket.acc[0], 4)}", True, colors["white"])
 
     screen.blit(positions, (20, 20))
     screen.blit(vel, (20, 40))
