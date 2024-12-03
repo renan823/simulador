@@ -126,5 +126,4 @@ def game(engine, rocket, ground, particles, explosion, screen):
             message = fonts["subtitle"].render("Você explodiu!", True, colors["red"])
 
         screen.blit(message, (WIDTH // 2 - message.get_width() // 2, HEIGHT // 2 - message.get_height() // 2))
-
     pygame.display.flip()

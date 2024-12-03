@@ -89,7 +89,6 @@ def main() -> None:
                 game(engine, rocket, ground, particles, explosion, screen)
             else:
                 SCREEN = MENU
-
         clock.tick(60)
 
 if __name__ == '__main__':

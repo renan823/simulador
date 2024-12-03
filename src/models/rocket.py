@@ -105,9 +105,7 @@ class Rocket:
         # Usa a vel terminal para verificar pouso
         tvel = self._get_terminal_velocity()
 
-        print(self.vel, self.acc)
-
-        if abs(self.acc[0]) > 5:
+        if self.vel[0] >= tvel:
             self.crashed = True
             return False
 
@@ -123,7 +121,8 @@ class Rocket:
             tvel = self._get_terminal_velocity()
 
             # Limitar a velocidade máxima a uma margem da velocidade terminal
-            if np.linalg.norm(self.vel) > tvel:
+            if self.vel[0] > tvel:
+                print("TESTE")
                 direction = self.vel / np.linalg.norm(self.vel)  # Normaliza a direção da velocidade
                 self.vel = direction * tvel  # Limita a velocidade
 
