@@ -1,6 +1,7 @@
 import numpy as np
 import math
-from settings import GRAVITY, R, T0, P0, L_tropo, T_tropo
+
+from src.utils.constants import GRAVITY, R, T0, P0, L_tropo, T_tropo
 
 '''
 Essas funções foram geradas usando inteligência artificial e adaptadas
@@ -134,3 +135,4 @@ def terminal_velocity(mass, width, height, altitude):
     
     # Fórmula da velocidade terminal
     return math.sqrt((2 * mass * GRAVITY) / (Cd * rho * A))
+    

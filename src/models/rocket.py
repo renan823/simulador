@@ -1,9 +1,9 @@
-from settings import GRAVITY, FUEL_DENSITY
-from engines import RocketEngine
-from atmosphere import air_density, terminal_velocity
-from utils import deg_to_rad
 import numpy as np
 import math
+
+from src.utils.constants import GRAVITY, FUEL_DENSITY
+from src.models.engines import RocketEngine
+from src.models.atmosphere import air_density, terminal_velocity
 
 class Rocket:
     def __init__(self, x: float, y: float, yaw: int, engine: RocketEngine) -> None:
@@ -18,7 +18,9 @@ class Rocket:
         self.launched = False
         self.landed = False
         self.crashed = False
+        self.lifted = False
         self.yaw = yaw
+        self.angular_velocity = 5
 
     def launch(self):
         if not self.launched:
@@ -36,7 +38,7 @@ class Rocket:
         return self.mass + (self.engine.fuel * FUEL_DENSITY)
 
     def _get_weight(self) -> np.ndarray:
-        angle = deg_to_rad(self.yaw)
+        angle = math.radians(self.yaw)  # Usando math.radians em vez de deg_to_rad
         return np.array([math.cos(angle), math.sin(angle)]) * self._get_mass() * GRAVITY
 
     def _get_viscosity(self) -> np.ndarray:
@@ -47,7 +49,6 @@ class Rocket:
         # Calcula a velocidade terminal do foguete
         return terminal_velocity(self._get_mass(), self.width, self.height, self.pos[1])
 
-    # Função gerada por IA
     def _get_drag(self) -> np.ndarray:
         # Calcula a força de arrasto baseada na velocidade e altitude
         velocity_magnitude = np.linalg.norm(self.vel)  # Magnitude da velocidade
@@ -79,7 +80,7 @@ class Rocket:
         drag_force = 0.5 * Cd * rho * A * velocity_magnitude**2
 
         # Aceleração devido ao arrasto
-        drag_acceleration = drag_force / (self.mass + (self.engine.fuel * FUEL_DENSITY))  # Aceleração devido ao arrasto
+        drag_acceleration = drag_force / self._get_mass()  # Aceleração devido ao arrasto
         drag_vector = -drag_acceleration * (self.vel / velocity_magnitude)  # Direção oposta à velocidade
 
         return drag_vector
@@ -92,9 +93,9 @@ class Rocket:
 
     def _get_acceleration(self) -> np.ndarray:
         force = self._get_resultant_force()
-        total_mass = self.mass + (self.engine.fuel * FUEL_DENSITY)
+        total_mass = self._get_mass()
         acceleration = force / total_mass
-        return acceleration
+        return np.array([math.cos(math.radians(self.yaw)), math.sin(math.radians(self.yaw))]) * acceleration
 
     def check_landing(self):
         # Ajusta condições do pouso
@@ -109,10 +110,9 @@ class Rocket:
         if abs(self.acc[0]) > 5:
             self.crashed = True
             return False
-        
+
         return True
 
-    # FALTA AJUSTAR A VELOCIDADE TERMINAL!!!!!
     def update(self) -> None:
         if self.launched and not self.landed:
             self.acc = self._get_acceleration()
@@ -126,3 +126,4 @@ class Rocket:
             if np.linalg.norm(self.vel) > tvel:
                 direction = self.vel / np.linalg.norm(self.vel)  # Normaliza a direção da velocidade
                 self.vel = direction * tvel  # Limita a velocidade
+

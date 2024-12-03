@@ -1,5 +1,5 @@
 import random
-from settings import colors
+from src.utils.misc import colors
 
 class Particle:
     def __init__(self, x, y):

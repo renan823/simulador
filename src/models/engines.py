@@ -1,8 +1,7 @@
-from settings import GRAVITY, FUEL_DENSITY, ENGINE_NAMES
-from utils import deg_to_rad
 import numpy as np
 import math
 
+from src.utils.constants import GRAVITY, FUEL_DENSITY, ENGINE_NAMES
 
 class RocketEngine:
     def __init__(self, burn_rate: float, mass: float, fuel: float, name: str, fuel_ejection: float) -> None:
@@ -35,7 +34,7 @@ class RocketEngine:
             return np.array([0.0, 0.0])
 
         # Calculando o ângulo de direção do motor
-        angle = deg_to_rad(yaw)
+        angle = math.radians(yaw)  # Usando math.radians em vez de deg_to_rad
 
         # Empuxo gerado é a combinação da velocidade de ejeção e a taxa de queima
         # A força é proporcional à quantidade de combustível restante
@@ -46,17 +45,13 @@ class RocketEngine:
 
         return thrust
 
-
-
 class EngineModel1(RocketEngine):
     def __init__(self, fuel):
         super().__init__(0.5, 200, fuel, ENGINE_NAMES[0], 10791)
 
-
 class EngineModel2(RocketEngine):
     def __init__(self, fuel):
         super().__init__(0.9, 215, fuel, ENGINE_NAMES[1], 5995)
-
 
 class EngineModel3(RocketEngine):
     def __init__(self, fuel):
