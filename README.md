@@ -39,7 +39,7 @@ O vetor $\vec{T}(t)$ que representa o empuxo. Ele é resultado de um cálculo en
 
 O vetor $\vec{F_{v}}(t)$ representa a força viscosa. Ela foi calculada considerando a equação: $$\vec{F_{v}}(t) = - b \cdot \vec{v}(t),$$ na qual $b$ varia de acordo com a altura que estamos na atmosfera, já que a densidade do ar diminui conforme subimos na atmosfera e, consequentemente, a resistência (ou então a viscosidade) diminui. Por fim, $\vec{v}(t)$ é o vetor da velocidade.
 
-O vetor $\vec{F_{g}}(t)$ representa a força gravitacional. Ela foi calculada usando a equação: $$\vec{F_{g}}(t) = - m \cdot g \cdot \vec{r}(t),$$ na qual $m$ considera somente a massa do foguete, já que a massa de combustível é descontada no empuxo. Além disso $g$ é a gravidade da terra, que é considerada constante, tal que $\displaystyle g = 9.80665 \frac{m}{s^{2}}$ nos nossos cálculos.
+O vetor $\vec{F_{g}}(t)$ representa a força gravitacional. Ela foi calculada usando a equação: $$\vec{F_{g}}(t) = - m \cdot g \cdot \hat{r}(t),$$ na qual $m$ considera somente a massa do foguete, já que a massa de combustível é descontada no empuxo. Além disso $g$ é a gravidade da terra, que é considerada constante, tal que $\displaystyle g = 9.80665 \frac{m}{s^{2}}$ nos nossos cálculos.
 
 Para finalizar o diagrama, o vetor $\vec{r}(t)$ é o vetor posição do foguete. Ele pode ser decomposto em: $$\vec{r}(t) = x(t) \cdot \hat{i} + y(t) \cdot \hat{j}.$$
 
@@ -56,7 +56,7 @@ Como dito anteriormente, o projeto trata-se de uma simulação de um foguete em 
 - requests
 - sympy
 - urllib3
-- yarg 
+- yarg---- 
 
 Nós consideramos 3 tipos de motores, que o usuário pode escolher livremente para simular. Além disso, consideramos 5 camadas para a atmosfera:
 - Troposfera
