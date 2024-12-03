@@ -117,7 +117,6 @@ def game(engine, rocket, ground, particles, explosion, screen):
             explosion.remove(particle)
     
     # Verifica se o foguete atingiu o chão
-    # FALTA AJUSTAR ISSO AQUI (DO JEITO Q TÁ ELE NUNCA VAI EXPLODIR)
     if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground.height) and not rocket.landed:
         if rocket.check_landing():
             while True:

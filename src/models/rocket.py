@@ -98,7 +98,9 @@ class Rocket:
         self.landed = True
         self.pos = self.initial_pos
 
-        if self.vel[0] < 200:
+        vmin = 200 # Velocidade mínima para explodir
+
+        if self.vel[0] < -vmin:
             self.crashed = True
             return False
 
