@@ -5,13 +5,14 @@ from src.utils.constants import WIDTH, HEIGHT, INITIAL_FUEL
 from src.models.surface import Surface
 from src.models.particle import Particle, ExplosionParticle
 
+
 def interpolate_color(color1, color2, factor):
     return (
         int(color1[0] + (color2[0] - color1[0]) * factor),
         int(color1[1] + (color2[1] - color1[1]) * factor),
         int(color1[2] + (color2[2] - color1[2]) * factor)
     )
-    
+
 
 def get_background(altitude):
     if altitude <= 11000:  # Troposfera
@@ -29,13 +30,15 @@ def get_background(altitude):
         factor = min((altitude - 86000) / 10000, 1)
         return interpolate_color(colors["darkblue3"], colors["darkblue4"], factor)
 
+
 rocket_image = pygame.image.load("./assets/rocket.png")
 rocket_image = pygame.transform.scale(rocket_image, (126, 126))
 exploded = False
 
+
 def game(engine, rocket, ground, particles, explosion, screen):
     global exploded
-    
+
     # Calcula o offset da câmera
     camera_offset_y = rocket.pos[0] - (HEIGHT // 2 - rocket.height // 2)
 
@@ -46,11 +49,15 @@ def game(engine, rocket, ground, particles, explosion, screen):
 
     # Escreve informações na tela
     if altitude <= 86000:
-        positions = fonts["message"].render(f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True, colors["black"])
+        positions = fonts["message"].render(
+            f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True,
+            colors["black"])
         vel = fonts["message"].render(f"Vel: {round(rocket.vel[0], 4) * -1}", True, colors["black"])
         acc = fonts["message"].render(f"Acc: {round(rocket.acc[0], 4) * -1}", True, colors["black"])
     else:
-        positions = fonts["message"].render(f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True,colors["white"])
+        positions = fonts["message"].render(
+            f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True,
+            colors["white"])
         vel = fonts["message"].render(f"Vel: {round(rocket.vel[0], 4) * -1}", True, colors["white"])
         acc = fonts["message"].render(f"Acc: {round(rocket.acc[0], 4) * -1}", True, colors["white"])
 
@@ -66,7 +73,8 @@ def game(engine, rocket, ground, particles, explosion, screen):
     screen.blit(positions, (20, 80))
 
     # Desenha o chão (só se estiver na câmera)
-    pygame.draw.rect(screen, colors["brown"], (ground.pos[0], HEIGHT - ground.height - camera_offset_y, ground.width, ground.height + 300))
+    pygame.draw.rect(screen, colors["brown"],
+                     (ground.pos[0], HEIGHT - ground.height - camera_offset_y, ground.width, ground.height + 300))
 
     # Desenha o tanque de combustível
     pygame.draw.rect(screen, colors["gray"], (WIDTH - 40, HEIGHT - 480, 20, 450))
@@ -85,11 +93,12 @@ def game(engine, rocket, ground, particles, explosion, screen):
     # Desenha o foguete (se ele não bateu)
     if not rocket.crashed:
         screen.blit(rocket_image, (rocket.pos[1], rocket.pos[0] - camera_offset_y))
-        
+
     # Cria partículas
     if rocket.launched and rocket.engine.fuel > 0 and rocket.engine.active and not rocket.crashed:
         for _ in range(5):
-            particles.append(Particle(rocket.pos[1] + rocket.width // 2, rocket.pos[0] - camera_offset_y + rocket.height))
+            particles.append(
+                Particle(rocket.pos[1] + rocket.width // 2, rocket.pos[0] - camera_offset_y + rocket.height))
 
     # Desenha partículas
     for particle in particles:
@@ -115,7 +124,7 @@ def game(engine, rocket, ground, particles, explosion, screen):
 
         if not particle.is_alive():
             explosion.remove(particle)
-    
+
     # Verifica se o foguete atingiu o chão
     # FALTA AJUSTAR ISSO AQUI (DO JEITO Q TÁ ELE NUNCA VAI EXPLODIR)
     if rocket.launched and (rocket.pos[0] + rocket.height >= HEIGHT - ground.height) and not rocket.landed:

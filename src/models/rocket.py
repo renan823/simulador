@@ -120,9 +120,9 @@ class Rocket:
             # Calculando a velocidade terminal
             tvel = self._get_terminal_velocity()
 
+            print(self.vel[0], tvel)
+
             # Limitar a velocidade máxima a uma margem da velocidade terminal
             if self.vel[0] > tvel:
-                print("TESTE")
                 direction = self.vel / np.linalg.norm(self.vel)  # Normaliza a direção da velocidade
                 self.vel = direction * tvel  # Limita a velocidade
-

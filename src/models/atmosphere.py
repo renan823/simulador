@@ -122,7 +122,7 @@ def terminal_velocity(mass, width, height, altitude):
     Returns:
         float: Velocidade terminal escalar.
     """
-    A = width * height  # Área frontal do foguete (m²)
+    A = width * height /1000 # Área frontal do foguete (m²)
     
     # Obter densidade do ar (ρ)
     rho = air_density(altitude)
