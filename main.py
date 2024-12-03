@@ -68,6 +68,7 @@ def main() -> None:
                                 rocket.swap_active()
                             else:
                                 rocket.launch()  # Inicia o foguete
+                                start_time = pygame.time.get_ticks()
     
                             if rocket.landed and not rocket.crashed:
                                 rocket.landed = False

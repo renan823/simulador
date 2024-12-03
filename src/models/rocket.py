@@ -77,10 +77,8 @@ class Rocket:
 
     def _get_resultant_force(self) -> np.ndarray:
         thrust = self.engine.get_thrust()
-        print(f"Thrust = {thrust}")
         weight = self._get_weight()
         drag = self._get_drag(thrust[0])
-        print(f"Drag = {drag}")
         return thrust + weight + drag
 
     def _get_acceleration(self) -> np.ndarray:
@@ -92,8 +90,7 @@ class Rocket:
             self.dir = -1
         else:
             self.dir = 1
-
-        print(f"Acc = {acceleration}")
+        
         return np.array([1, 0]) * acceleration
 
     def check_landing(self) -> bool:
@@ -110,15 +107,8 @@ class Rocket:
     def update(self) -> None:
         if self.launched and not self.landed:
             self.acc = self._get_acceleration()
-
-            print(f"Santes: {self.pos}")
-            print(f"Vantes: {self.vel}")
             
             self.vel += self.acc  # Atualizando a velocidade com a aceleração
             self.pos += self.vel  # Atualizando a posição com a velocidade
-
-            print(f"Sdepois: {self.pos}")
-            print(f"Vdepois: {self.vel}")
-            print("--------------------------------")
 
 

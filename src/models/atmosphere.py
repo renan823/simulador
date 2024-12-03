@@ -40,7 +40,7 @@ def air_density(altitude):
     # Estratosfera inferior: 11 a 20 km (temperatura constante)
     elif 11000 < altitude <= 20000:
         T = T_tropo
-        P11 = P0 * (1 - (L_tropo * 11000) / T0) ** (g / (R * L_tropo))
+        P11 = P0 * (1 - (L_tropo * 11000) / T0) ** (GRAVITY / (R * L_tropo))
         P = P11 * math.exp(-GRAVITY * (altitude - 11000) / (R * T))
 
     # Estratosfera superior: 20 a 47 km (temperatura aumenta linearmente)
