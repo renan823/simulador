@@ -22,7 +22,7 @@ Como dito acima, estaremos considerando diversos conceitos físicos na nossa sim
 - Gravidade
 - Força Gravitacional
 - Viscosidade
-- Força Viscosa
+- Força Viscosa (nesse caso chamada de Arrasto também)
 - Empuxo
 - 2ª Lei de Newton
 
