@@ -6,7 +6,7 @@ from src.models.engines import RocketEngine
 from src.models.atmosphere import air_density, terminal_velocity
 
 class Rocket:
-    def __init__(self, x: float, y: float, yaw: int, engine: RocketEngine) -> None:
+    def __init__(self, x: float, y: float, engine: RocketEngine) -> None:
         self.width: int = 126
         self.height: int = 126
         self.initial_pos = np.array([float(x), float(y)])
@@ -19,16 +19,15 @@ class Rocket:
         self.landed = False
         self.crashed = False
         self.lifted = False
-        self.yaw = yaw
-        self.angular_velocity = 5
+        self.dir = 1 # Começa apontando para cima: dir = 1 (positivo), dir = -1 (negativo)
 
-    def launch(self):
+    def launch(self) -> None:
         if not self.launched:
             self.engine.active = True
             self.launched = True
             self.update()
 
-    def swap_active(self):
+    def swap_active(self) -> None:
         if self.engine.active:
             self.engine.deactivate()
         else:
@@ -38,8 +37,7 @@ class Rocket:
         return self.mass + (self.engine.fuel * FUEL_DENSITY)
 
     def _get_weight(self) -> np.ndarray:
-        angle = math.radians(self.yaw)  # Usando math.radians em vez de deg_to_rad
-        return np.array([math.cos(angle), math.sin(angle)]) * self._get_mass() * GRAVITY
+        return np.array([0, -1]) * self._get_mass() * GRAVITY
 
     def _get_viscosity(self) -> np.ndarray:
         # Calcula a viscosidade conforme a resistencia do ar
@@ -49,7 +47,7 @@ class Rocket:
         # Calcula a velocidade terminal do foguete
         return terminal_velocity(self._get_mass(), self.width, self.height, self.pos[1])
 
-    def _get_drag(self) -> np.ndarray:
+    def _get_drag(self, dir) -> np.ndarray:
         # Calcula a força de arrasto baseada na velocidade e altitude
         velocity_magnitude = np.linalg.norm(self.vel)  # Magnitude da velocidade
         if velocity_magnitude == 0:
@@ -81,29 +79,29 @@ class Rocket:
 
         # Aceleração devido ao arrasto
         drag_acceleration = drag_force / self._get_mass()  # Aceleração devido ao arrasto
-        drag_vector = -drag_acceleration * (self.vel / velocity_magnitude)  # Direção oposta à velocidade
+        drag_vector = np.array([0, dir]) * drag_acceleration * (self.vel / velocity_magnitude)  # Normalizando a velocidade
 
         return drag_vector
 
     def _get_resultant_force(self) -> np.ndarray:
-        thrust = self.engine.get_thrust(self.yaw)
+        thrust = self.engine.get_thrust()
         weight = self._get_weight()
-        drag = self._get_drag()
-        return - thrust + weight + drag
+        drag = self._get_drag(self.dir)
+        return thrust + weight + drag
 
     def _get_acceleration(self) -> np.ndarray:
         force = self._get_resultant_force()
         total_mass = self._get_mass()
         acceleration = force / total_mass
-        return np.array([math.cos(math.radians(self.yaw)), math.sin(math.radians(self.yaw))]) * acceleration
+        return np.array([0, 1]) * acceleration
 
-    def check_landing(self):
+    def check_landing(self) -> bool:
         # Ajusta condições do pouso
         self.landed = True
         self.pos = self.initial_pos
 
         # Usa a vel terminal para verificar pouso
-        tvel = self._get_terminal_velocity()
+        tvel = self._get_terminal_velocity() # TEMP
 
         if self.vel[0] >= tvel:
             self.crashed = True
@@ -114,6 +112,12 @@ class Rocket:
     def update(self) -> None:
         if self.launched and not self.landed:
             self.acc = self._get_acceleration()
+
+            if self.acc[1] < 0:
+                self.dir = -1
+            else:
+                self.dir = 1
+            
             self.vel += self.acc  # Atualizando a velocidade com a aceleração
             self.pos += self.vel  # Atualizando a posição com a velocidade
 
@@ -121,7 +125,7 @@ class Rocket:
             tvel = self._get_terminal_velocity()
 
             # Limitar a velocidade máxima a uma margem da velocidade terminal
-            if self.vel[0] > tvel:
+            if self.vel[1] > tvel:
                 print("TESTE")
                 direction = self.vel / np.linalg.norm(self.vel)  # Normaliza a direção da velocidade
                 self.vel = direction * tvel  # Limita a velocidade
