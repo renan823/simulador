@@ -73,11 +73,11 @@ def game(engine, rocket, ground, particles, explosion, screen):
     # Escreve informações na tela
     if altitude <= 86000:
         positions = fonts["message"].render(
-            f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True,
+            f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 176, 2) * -1}", True,
             colors["black"])
     else:
         positions = fonts["message"].render(
-            f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 150, 2) * -1}", True,
+            f"X: {round(rocket.pos[1] - 437, 2)}  Y: {round(rocket.pos[0] - HEIGHT + 176, 2) * -1}", True,
             colors["white"])
 
     screen.blit(positions, (20, 20))
